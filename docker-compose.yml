@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  jenkins:
+    # Construye la imagen personalizada desde jenkins.Dockerfile
+    # (Jenkins LTS + Docker CLI para poder lanzar agentes Docker)
+    build:
+      context: .
+      dockerfile: jenkins.Dockerfile
+
+    container_name: jenkins
+
+    # user: root permite escribir en el socket de Docker montado.
+    # En producción, ajustar el GID del grupo docker del host y usar
+    # 'group_add' en lugar de correr como root.
+    user: root
+
+    ports:
+      - "8080:8080"    # Interfaz web de Jenkins
+      - "50000:50000"  # Puerto JNLP para agentes remotos
+
+    volumes:
+      # Persistencia de la configuración y jobs de Jenkins entre reinicios
+      - jenkins_home:/var/jenkins_home
+
+      # Socket de Docker del host montado dentro del contenedor.
+      # Esto permite que Jenkins ejecute 'docker run' usando el daemon
+      # del host (Docker-out-of-Docker), necesario para el agente Docker
+      # que usa la imagen cypress/included en el Jenkinsfile.
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    restart: unless-stopped
+
+    # Variables de entorno opcionales para configuración avanzada
+    environment:
+      # Desactiva el wizard inicial de configuración (útil para setups automáticos)
+      # Comenta esta línea si prefieres el wizard interactivo al primer inicio
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
+
+# Volumen nombrado gestionado por Docker para jenkins_home
+# Los datos persisten aunque el contenedor sea eliminado y recreado
+volumes:
+  jenkins_home:
+    driver: local

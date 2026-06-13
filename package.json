@@ -1,0 +1,19 @@
+{
+  "name": "jenkins-cypress-pipeline",
+  "version": "1.0.0",
+  "description": "Proyecto de pruebas automatizadas E2E con Cypress para pipeline Jenkins",
+  "author": "Alexis Macz",
+  "license": "MIT",
+  "scripts": {
+    "test": "cypress run",
+    "test:open": "cypress open",
+    "lint": "eslint cypress/**/*.js"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "cypress-multi-reporters": "^1.6.4",
+    "eslint": "^8.57.0",
+    "eslint-plugin-cypress": "^2.15.2",
+    "mocha-junit-reporter": "^2.2.1"
+  }
+}
