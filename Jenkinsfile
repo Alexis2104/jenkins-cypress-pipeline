@@ -20,6 +20,9 @@ pipeline {
         timeout(time: 30, unit: 'MINUTES')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
+        // Evita el checkout implícito que Jenkins hace antes del primer stage;
+        // el checkout explícito en la etapa Checkout es el único que corre.
+        skipDefaultCheckout()
     }
 
     stages {
